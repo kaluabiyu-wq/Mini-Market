@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mini_market/data/market_store.dart';
-import 'package:mini_market/screens/add_product.dart';
-import 'package:mini_market/screens/cart_page.dart';
 import 'package:mini_market/screens/product_card.dart';
-import 'package:mini_market/screens/product_details.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,10 +14,7 @@ class _HomePageState extends State<HomePage> {
   final products = MarketStore.products;
 
   Future<void> _openCart() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => CartPage()),
-    );
+    await context.push('/cart');
 
     setState(() {});
   }
@@ -27,19 +22,13 @@ class _HomePageState extends State<HomePage> {
  
 
   Future<void> _openProduct({required String id}) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ProductDetails(productId: id)),
-    );
+     await context.push('/product/$id');
 
     setState(() {});
   }
 
   Future<void> _openProductForm() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddProduct()),
-    );
+     await context.push('/add');
 
     setState(() {});
   }

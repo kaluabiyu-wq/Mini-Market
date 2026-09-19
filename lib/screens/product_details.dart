@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mini_market/data/categories.dart';
 import 'package:mini_market/data/market_store.dart';
 import 'package:mini_market/models/product.dart';
-import 'package:mini_market/screens/add_product.dart';
 
 
 class ProductDetails extends StatefulWidget {
@@ -22,15 +22,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   Future<void> _editProduct(Product product) async {
-    // Passing the existing product through the constructor (imperative
-    // navigation, data-via-constructor style) puts AddProduct into
-    // "edit" mode instead of "create" mode.
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddProduct(existingProduct: product),
-      ),
-    );
+      await context.push('/add', extra: product);
+  
     setState(() {});
   }
 
