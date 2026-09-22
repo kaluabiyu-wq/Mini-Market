@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mini_market/blocs/cart_bloc.dart';
+import 'package:mini_market/blocs/cart_event.dart';
+import 'package:mini_market/blocs/product_bloc.dart';
+import 'package:mini_market/blocs/product_event.dart';
+import 'package:mini_market/blocs/product_state.dart';
 import 'package:mini_market/data/categories.dart';
-import 'package:mini_market/data/market_store.dart';
 import 'package:mini_market/models/product.dart';
 
 
@@ -22,8 +27,8 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   Future<void> _editProduct(Product product) async {
-      await context.push('/add', extra: product);
-  
+ 
+     await context.push('/add', extra: product);
     setState(() {});
   }
 
@@ -49,32 +54,45 @@ class _ProductDetailsState extends State<ProductDetails> {
 
     if (shouldDelete != true) return;
 
-    MarketStore.deleteProduct(product.id);
+    context.read<ProductBloc>().add(DeleteProductEvent(product.id));
     if (!mounted) return;
        Navigator.pop(context);
   }
 
   void _addToCart(Product product) {
-    MarketStore.addToCart(product, _quantity);
+    context.read<CartBloc>().add(AddToCartEvent(product, _quantity));
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final product = MarketStore.findProduct(widget.productId);
+    return BlocBuilder<ProductBloc, ProductState>(
+      builder: (context, productState) {
+        final product = context.read<ProductBloc>().findProduct(widget.productId);
 
-       if (product == null) {
-      return Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: () => Navigator.pop(context)),
-        ),
-        body: const Center(child: Text('Product not found.')),
-      );
-    }
+        if (product == null) {
+          return Scaffold(
+            appBar: AppBar(
+              leading: BackButton(onPressed: () => Navigator.pop(context)),
+            ),
+            body: const Center(child: Text('Product not found.')),
+          );
+        }
 
-    final productColor = colorForCategory(product.category);
-    final productIcon = iconForCategory(product.category);
+        final productColor = colorForCategory(product.category);
+        final productIcon = iconForCategory(product.category);
 
+        return _buildScaffold(context, product, productColor, productIcon);
+      },
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context,
+    Product product,
+    Color productColor,
+    IconData productIcon,
+  ) {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: () => Navigator.pop(context)),

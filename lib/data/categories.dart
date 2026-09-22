@@ -10,7 +10,7 @@ const List<String> kCategories = [
   'furniture',
 ];
 
-IconData iconForCategory(String category) {
+ iconForCategory(String category) {
   switch (category) {
     case 'smartphones':
       return Icons.phone_iphone;

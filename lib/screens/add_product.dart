@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mini_market/blocs/product_bloc.dart';
+import 'package:mini_market/blocs/product_event.dart';
 import 'package:mini_market/data/categories.dart';
-import 'package:mini_market/data/market_store.dart';
 import 'package:mini_market/models/product.dart';
 
 
@@ -53,23 +55,29 @@ class _AddProductState extends State<AddProduct> {
     final price = double.parse(_priceController.text.trim());
     final description = _descriptionController.text.trim();
 
+    final productBloc = context.read<ProductBloc>();
+
     if (_isEditing) {
-      MarketStore.updateProduct(
-        widget.existingProduct!.copyWith(
-          title: title,
-          price: price,
-          category: _category,
-          description: description,
+      productBloc.add(
+        UpdateProductEvent(
+          widget.existingProduct!.copyWith(
+            title: title,
+            price: price,
+            category: _category,
+            description: description,
+          ),
         ),
       );
     } else {
-      MarketStore.addProduct(
-        Product(
-          id: MarketStore.newProductId(),
-          title: title,
-          price: price,
-          category: _category,
-          description: description,
+      productBloc.add(
+        AddProductEvent(
+          Product(
+            id: productBloc.newProductId(),
+            title: title,
+            price: price,
+            category: _category,
+            description: description,
+          ),
         ),
       );
     }
